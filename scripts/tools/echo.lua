@@ -1,9 +1,13 @@
 local echo = {}
 
-function echo:Call(args)
+---@param args table
+function echo:Call(args, freeCam)
+	local msg = "";
 	for _, arg in ipairs(args) do
-		print(arg)
+		msg = msg .. " " .. arg
 	end
+
+	return { success = true, message = msg }
 end
 
 return echo

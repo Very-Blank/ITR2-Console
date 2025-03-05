@@ -1,5 +1,5 @@
 local shell = {
-	tools = require("toolLoader"),
+	tools = require("tools"),
 	builtins = require("builtins"),
 }
 
@@ -79,30 +79,40 @@ function shell:ProcessAliases(sh, args)
 end
 
 ---@param commands table
-function shell:Execute(sh, commands)
+function shell:Execute(sh, commands, freeCam)
 	for _, args in ipairs(commands) do
 		if #args > 0 then
 			local tool = args[1]
 			table.remove(args, 1)
 			if sh.builtins[tool] ~= nil then
-				sh.builtins[tool]:Call(args)
+				local value = sh.builtins[tool]:Call(sh, args, freeCam)
+				if value ~= nil and value.success and value.message ~= nil then
+					freeCam.PrintToOutput(value.message, false)
+				elseif value ~= nil and not value.success and value.message ~= nil then
+					freeCam.PrintToOutput(value.message, true)
+				end
 			elseif sh.tools[tool] ~= nil then
-				sh.tools[tool]:Call(args)
+				local value = sh.tools[tool]:Call(args, freeCam)
+				if value ~= nil and value.success and value.message ~= nil then
+					freeCam.PrintToOutput(value.message, false)
+				elseif value ~= nil and not value.success and value.message ~= nil then
+					freeCam.PrintToOutput(value.message, true)
+				end
 			else
-				print("tool not found")
+				freeCam.PrintToOutput("Tool not found", true)
 			end
 		end
 	end
 end
 
 ---@param text string
-function shell:Run(sh, text)
+function shell:Run(sh, text, freeCam)
 	local commands = sh:Parse(text)
 	for i, args in ipairs(commands) do
 		commands[i] = sh:ProcessAliases(sh, args)
 	end
 
-	sh:Execute(sh, commands)
+	sh:Execute(sh, commands, freeCam)
 end
 
 return shell

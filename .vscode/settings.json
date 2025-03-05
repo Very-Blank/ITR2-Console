@@ -1,0 +1,12 @@
+{
+    "Lua.diagnostics.globals": [
+        "StaticFindObject",
+        "ExecuteInGameThread",
+        "FindFirstOf",
+        "RegisterKeyBind",
+        "Key",
+        "RegisterHook",
+        "LoadAsset",
+        "FName"
+    ]
+}
